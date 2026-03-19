@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orpheus Music Transformer – User Guide</title>
+    <meta name="color-scheme" content="light dark">
+    <style>
+        /* ----- CSS variables (light mode default) ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-gradient-start: #f6f9fc;
+            --bg-gradient-end: #e9f1f8;
+            --container-bg: rgba(255,255,255,0.75);
+            --container-border: rgba(255,255,255,0.5);
+            --text-primary: #1e2b3c;
+            --text-secondary: #2c5775;
+            --heading-primary: #0b2b44;
+            --heading-secondary: #1a3b4e;
+            --accent: #2a5f7a;
+            --accent-light: #2a5f7a15;
+            --card-bg: white;
+            --card-shadow: 0 10px 20px -8px rgba(0,32,64,0.15);
+            --border-light: rgba(42,95,122,0.1);
+            --step-bg: #ffffffcc;
+            --table-bg: white;
+            --table-header-bg: #1f4b63;
+            --table-header-text: white;
+            --table-border: #d9e7f0;
+            --badge-bg: #2a5f7a15;
+            --badge-text: #1f4b63;
+            --badge-border: #2a5f7a30;
+            --note-bg: #fef8e7;
+            --note-border: #f3b33d;
+            --attribution-border: #9bbfd0;
+        }
+
+        /* ----- dark mode overrides (auto‑detected) ----- */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-gradient-start: #121e2c;
+                --bg-gradient-end: #1a2b3a;
+                --container-bg: rgba(20, 30, 40, 0.85);
+                --container-border: rgba(100, 140, 170, 0.3);
+                --text-primary: #e2eaf1;
+                --text-secondary: #b6d0e0;
+                --heading-primary: #aaccff;
+                --heading-secondary: #9bb8d4;
+                --accent: #3f8bb0;
+                --accent-light: #3f8bb020;
+                --card-bg: #1f2f3c;
+                --card-shadow: 0 10px 20px -8px rgba(0,0,0,0.5);
+                --border-light: #3f5f7450;
+                --step-bg: #1f2f3ccc;
+                --table-bg: #1f2f3c;
+                --table-header-bg: #2b4b60;
+                --table-header-text: #ffffff;
+                --table-border: #3f5f74;
+                --badge-bg: #3f8bb025;
+                --badge-text: #c2e0ff;
+                --badge-border: #3f8bb070;
+                --note-bg: #2f2a1c;
+                --note-border: #e5a739;
+                --attribution-border: #3f5f74;
+            }
+        }
+
+        body {
+            background: linear-gradient(145deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            padding: clamp(1rem, 4vw, 2.5rem);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease, color 0.2s ease;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--container-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);
+            padding: clamp(1.5rem, 5vw, 3rem);
+            border: 1px solid var(--container-border);
+        }
+
+        h1 {
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--heading-primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .subhead {
+            font-size: clamp(1rem, 4vw, 1.3rem);
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            font-weight: 600;
+            color: var(--heading-secondary);
+            margin: 2.5rem 0 1.2rem 0;
+            border-left: 6px solid var(--accent);
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-weight: 600;
+            color: var(--accent);
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+        }
+
+        ul, ol {
+            margin: 0.5rem 0 1.8rem 1.8rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-light);
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card strong {
+            display: block;
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-container {
+            background: var(--step-bg);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(4px);
+        }
+
+        .step-item {
+            display: flex;
+            gap: 1.2rem;
+            margin-bottom: 1.8rem;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            background: var(--accent);
+            color: white;
+            width: 2.4rem;
+            height: 2.4rem;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--table-bg);
+            border-radius: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+            margin: 1.8rem 0;
+            transition: background 0.3s ease;
+        }
+
+        th {
+            background: var(--table-header-bg);
+            color: var(--table-header-text);
+            font-weight: 600;
+            padding: 1rem 1.2rem;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--table-border);
+            color: var(--text-primary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            border-radius: 40px;
+            padding: 0.25rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid var(--badge-border);
+            margin-right: 0.5rem;
+        }
+
+        .note {
+            background: var(--note-bg);
+            border-left: 6px solid var(--note-border);
+            padding: 1.2rem 1.8rem;
+            border-radius: 1rem;
+            margin: 2rem 0;
+            color: var(--text-primary);
+        }
+
+        .attribution {
+            margin-top: 3.5rem;
+            padding-top: 2rem;
+            border-top: 2px dashed var(--attribution-border);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .attribution a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .attribution a:hover {
+            text-decoration: underline;
+            filter: brightness(1.2);
+        }
+
+        code {
+            background: var(--accent-light);
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            font-size: 0.9em;
+            color: var(--accent);
+        }
+
+        @media (max-width: 600px) {
+            .step-item {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .step-number {
+                width: 2rem;
+                height: 2rem;
+                font-size: 1rem;
+            }
+            .container {
+                padding: 1.5rem;
+            }
+        }
+
+        /* small touch: smooth theme transition */
+        .container, .feature-card, .step-container, table, .badge, .note {
+            transition: background-color 0.3s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎼 Orpheus Music Transformer</h1>
+        <div class="subhead">SOTA symbolic music transformer · 2.3M+ MIDIs · 8k context · multi‑instrument co‑composition</div>
+
+        <!-- feature grid -->
+        <div class="feature-grid">
+            <div class="feature-card"><strong>⚡ Advanced architecture</strong> 748M parameters, full attention, RoPE, Flash Attention – optimised for speed and quality.</div>
+            <div class="feature-card"><strong>🎹 Efficient encoding</strong> 3 tokens per note, 7 per tri‑chord – rich music within 8k tokens.</div>
+            <div class="feature-card"><strong>🥁 Instrument‑aware</strong> Learns all 128 MIDI patches separately + dedicated drum channel.</div>
+            <div class="feature-card"><strong>🔚 Natural endings</strong> Special outro tokens for graceful conclusions.</div>
+            <div class="feature-card"><strong>🧪 Batch generation</strong> 10 continuations at once – preview, select, combine.</div>
+            <div class="feature-card"><strong>🎚️ Three models</strong> Medium (fast), Large (quality), Fine‑tuned (optimal).</div>
+        </div>
+
+        <h2>📘 How to use – step by step</h2>
+
+        <div class="step-container">
+            <div class="step-item">
+                <span class="step-number">1</span>
+                <div><strong>Start a composition</strong><br>
+                Upload a MIDI file (.mid, .midi, .kar) – the model works best with a clear musical phrase.<br>
+                <em>Or</em> select up to 5 prime instruments (the app builds a simple chord from them).<br>
+                <em>Or</em> just click “Generate” – the model starts from the start‑of‑sequence token.</div>
+            </div>
+            <div class="step-item">
+                <span class="step-number">2</span>
+                <div><strong>Set generation parameters</strong><br>
+                Adjust prime tokens (max 6656), generation length, temperature, top‑p, and optionally add drums or an outro token.</div>
+            </div>
+            <div class="step-item">
+                <span class="step-number">3</span>
+                <div><strong>Choose a model</strong><br>
+                Medium Base (fast), Large Base (higher quality), Large Fine‑Tuned (recommended for final pieces).</div>
+            </div>
+            <div class="step-item">
+                <span class="step-number">4</span>
+                <div><strong>Generate & preview</strong><br>
+                Click “Generate”. You get 10 continuations (batches). Each tab shows audio preview, MIDI plot (with seed‑end marker), and downloadable MIDI file.</div>
+            </div>
+            <div class="step-item">
+                <span class="step-number">5</span>
+                <div><strong>Assemble your final piece</strong><br>
+                Pick a batch, click “Add batch” – it appends to your composition. Preview the full result below. Add more batches or remove the last one as you like.</div>
+            </div>
+            <div class="step-item">
+                <span class="step-number">6</span>
+                <div><strong>Export</strong><br>
+                The final composition is shown as audio, full MIDI plot, and a downloadable MIDI file. (Local files are saved in <code>output_midis/</code>.)</div>
+            </div>
+        </div>
+
+        <h2>⚙️ Generation options explained</h2>
+
+        <table>
+            <thead><tr><th>Option</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Prime instruments</strong></td><td>If no MIDI is uploaded, builds a short chord from these instruments. Drums are separate.</td></tr>
+                <tr><td><strong>Number of prime tokens</strong></td><td>How much of the uploaded MIDI is fed to the model. Truncate to the exact phrase you want continued.</td></tr>
+                <tr><td><strong>Number of tokens to generate</strong></td><td>Length of each continuation. 512–1024 tokens ≈ 30–60 seconds of music.</td></tr>
+                <tr><td><strong>Temperature</strong></td><td>Randomness in sampling. 0.8–1.0 is typical. Higher = more creative, lower = more repetitive.</td></tr>
+                <tr><td><strong>Top‑p</strong></td><td>Nucleus sampling – only tokens summing to probability <code>p</code> are considered. 0.96 works well; 1 = disabled.</td></tr>
+                <tr><td><strong>Add drums</strong></td><td>Prepends a simple random drum pattern – useful if your seed lacks drums.</td></tr>
+                <tr><td><strong>Add outro</strong></td><td>Appends an <code>[OUTRO]</code> token, encouraging the model to wrap up the piece.</td></tr>
+            </tbody>
+        </table>
+
+        <h2>💡 Best practices tips</h2>
+        <ul>
+            <li><strong>A good seed is everything!</strong> Upload a MIDI with a clear, trimmed phrase.</li>
+            <li><strong>Trim your seed</strong> – use the <em>number of prime tokens</em> slider to cut exactly where you want the continuation to start.</li>
+            <li><strong>Keep it focused:</strong> Remove excessive instruments – 4–5 prominent ones work best.</li>
+            <li><strong>Ideal run time:</strong> 30–60 seconds (~1024–1536 tokens) gives the model enough context.</li>
+            <li><strong>Experiment:</strong> You may need several generation attempts to get a continuation you like.</li>
+            <li><strong>Don’t chase perfection:</strong> Enjoy the creative process and the unexpected ideas the model offers.</li>
+        </ul>
+
+        <div class="note">
+            <strong>📌 Please note:</strong> Orpheus is primarily a continuation/co‑composition model. It works best when given musical context. Random generation from scratch may not always produce great results.
+        </div>
+
+        <h2>🧠 Available models</h2>
+        <p>
+            <span class="badge">Medium Base</span> – faster, good for quick experiments.<br>
+            <span class="badge">Large Base</span> – higher quality, more nuanced.<br>
+            <span class="badge">Large Fine‑Tuned</span> – optimised for musical coherence and quality (recommended).
+        </p>
+
+        <h2>📦 Output & export</h2>
+        <p>All generated MIDI files include metadata and are playable in any DAW. Audio is rendered with a professional SoundFont (SGM‑v2.01). Final compositions can be downloaded as MIDI files.</p>
+
+        <div class="attribution">
+            <p>🎵 <strong>Orpheus Music Transformer</strong> – developed by Alex Lev (Tegridy Code) exclusively for <strong>Project Los Angeles</strong>.<br>
+            🐙 <a href="https://github.com/asigalov61" target="_blank">GitHub</a> · 
+            🤗 <a href="https://huggingface.co/spaces/asigalov61/Orpheus-Music-Transformer" target="_blank">Hugging Face Space</a> · 
+            📄 License: Apache 2.0 · Year 2026</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">If you use this model in your work, please credit the author and link to the Hugging Face Space.</p>
+            <p style="margin-top: 1.5rem; font-size: 1.1rem;">❤️ Enjoy making music with Orpheus!</p>
+            <p style="margin-top: 1rem; opacity: 0.8;">🌓 Automatically adapts to your system light/dark theme.</p>
+        </div>
+    </div>
+</body>
+</html>
